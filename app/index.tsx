@@ -58,6 +58,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 4,
     width: '90%',
+    alignItems: 'center',
   }, header: {
     paddingVertical: 12,
     flexDirection: 'row',
