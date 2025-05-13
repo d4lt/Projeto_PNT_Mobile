@@ -30,6 +30,7 @@ const main = () => {
       </View>
       <View style={styles.container}>
         <Text style={styles.h1}>O pokemon do dia é: </Text>
+        
       </View>
     </ImageBackground>
   )
