@@ -3,14 +3,31 @@ import * as SplashScreen from "expo-splash-screen";
 import { NavigationContainer } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import { View, Text, ImageBackground, StyleSheet, Image } from "react-native";
-import React, { useEffect } from "react";
-import PokemonInformation from "../components/pokemonInformation";
+import React, { useEffect, useState } from "react";
+import PokemonInformation from "@/src/components/pokemonInformation";
+import fetchPokemon from "@/src/utils/fetchPokemon";
+import {
+  baseStatsType,
+  pokedexDataType,
+  WrongPokemonNameError,
+} from "../utils/pokemonInformation.types";
+import PokemonNotFound from "../components/pokemonNotFound";
 
 const HomeScreen = () => {
   const [loaded, error] = useFonts({
     Fredoka: require("../assets/fonts/Fredoka.ttf"),
     Caprasimo: require("../assets/fonts/Caprasimo.ttf"),
   });
+  const [baseStats, setBaseStats] = useState<baseStatsType | null>(null);
+  const [pokedexData, setPokedexData] = useState<pokedexDataType | null>(null);
+
+  // se o fetchPokemon der error, o erro vai ser identificado nessa variavel,
+  // se o usuario digitar o nome do pokemon errado, o erro sera o
+  // WrongPokemonNameError
+  const [fetchError, setFetchError] = useState<Error | null>(null);
+
+  //Link para a imagem do pokemon
+  const [ImageLink, setImageLink] = useState<string>("");
 
   useEffect(() => {
     if (loaded || error) {
@@ -21,6 +38,29 @@ const HomeScreen = () => {
   if (!loaded && !error) {
     return null;
   }
+
+  // fetch pokemon data
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await fetchPokemon();
+
+        setBaseStats(result.baseStats as baseStatsType);
+        setPokedexData(result.pokedexData as pokedexDataType);
+        setImageLink(result.pokemonImageLink);
+      } catch (error: unknown) {
+        if (error instanceof WrongPokemonNameError) {
+          console.log("You typed the wrong pokemon name"); //TODO
+          setFetchError(error as WrongPokemonNameError);
+        } else {
+          console.log(error);
+          setFetchError(error as Error);
+        }
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <ImageBackground
@@ -37,7 +77,12 @@ const HomeScreen = () => {
       </View>
       <View style={styles.pokemonContainer}>
         <Text style={styles.h1}>O pokemon do dia é: </Text>
-        <PokemonInformation></PokemonInformation>
+        {baseStats && pokedexData && !fetchError ? (
+          <PokemonInformation baseStats={baseStats} pokedexData={pokedexData} />
+        ) : (
+          // componente placeholder simples para o pokemon nao encontrado
+          <PokemonNotFound />
+        )}
       </View>
     </ImageBackground>
   );
