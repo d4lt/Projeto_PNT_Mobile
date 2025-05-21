@@ -76,13 +76,18 @@ const HomeScreen = () => {
         <Text style={styles.title}>Dailymon</Text>
       </View>
       <View style={styles.pokemonContainer}>
-        <Text style={styles.h1}>O pokemon do dia é: </Text>
-        {baseStats && pokedexData && !fetchError ? (
-          <PokemonInformation baseStats={baseStats} pokedexData={pokedexData} />
-        ) : (
-          // componente placeholder simples para o pokemon nao encontrado
-          <PokemonNotFound />
-        )}
+        <View style={styles.pokemonInfo}>
+          <Text style={styles.h1}>O pokemon do dia é: </Text>
+          {baseStats && pokedexData && !fetchError ? (
+            <PokemonInformation
+              baseStats={baseStats}
+              pokedexData={pokedexData}
+            />
+          ) : (
+            // componente placeholder simples para o pokemon nao encontrado
+            <PokemonNotFound />
+          )}
+        </View>
       </View>
     </ImageBackground>
   );
@@ -105,7 +110,8 @@ const styles = StyleSheet.create({
   },
 
   pokemonContainer: {
-    marginTop: 0,
+    flexDirection: "column",
+    marginTop: 70,
     backgroundColor: "#ffffff",
     borderRadius: 6,
     padding: 16,
@@ -115,8 +121,17 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 4,
     width: "90%",
-    bottom: "25%",
     alignItems: "center",
+    justifyContent: "center",
+  },
+  
+  pokemonInfo: {
+    borderWidth: 3,
+    borderRadius: 10,
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 16,
   },
 
   header: {
@@ -148,7 +163,7 @@ const styles = StyleSheet.create({
     fontSize: 48,
   },
   h1: {
-    fontSize: 24,
+    fontSize: 48,
     fontWeight: 400,
     fontFamily: "Caprasimo",
   },
